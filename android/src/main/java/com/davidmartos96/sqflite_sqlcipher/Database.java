@@ -38,15 +38,12 @@ class Database {
 
     // Change default error handler to avoid erasing the existing file.
     public void openReadOnly() {
-        openWithFlags(SQLiteDatabase.OPEN_READONLY, new DatabaseErrorHandler() {
-            @Override
-            public void onCorruption(SQLiteDatabase dbObj) {
-                // ignored
-                // default implementation delete the file
-                //
-                // This happens asynchronously so cannot be tracked. However a simple
-                // access should fail
-            }
+        openWithFlags(SQLiteDatabase.OPEN_READONLY, dbObj -> {
+            // ignored
+            // default implementation delete the file
+            //
+            // This happens asynchronously so cannot be tracked. However a simple
+            // access should fail
         });
     }
 
@@ -106,7 +103,7 @@ class Database {
     String getThreadLogTag() {
         Thread thread = Thread.currentThread();
 
-        return "" + id + "," + thread.getName() + "(" + thread.getId() + ")";
+        return id + "," + thread.getName() + "(" + thread.getId() + ")";
     }
 
     String getThreadLogPrefix() {

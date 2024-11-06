@@ -44,7 +44,8 @@ void main() {
       var isDatabase = false;
       try {
         db = await openReadOnlyDatabase(path);
-      } catch (_) {} finally {
+      } catch (_) {
+      } finally {
         await db?.close();
       }
       return isDatabase;

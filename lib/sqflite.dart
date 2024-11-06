@@ -45,7 +45,6 @@ class Sqflite {
     return setDebugModeOn(on);
   }
 
-
   /// Testing only
   @Deprecated('Testing only')
   static Future<void> devInvokeMethod(String method,

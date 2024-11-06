@@ -196,8 +196,8 @@ class _SimpleDbTestPageState extends State<SimpleDbTestPage> {
 
             Future _countRecord() async {
               var db = await _openDatabase();
-              var result = firstIntValue(
-                  await db.query('test', columns: ['COUNT(*)']));
+              var result =
+                  firstIntValue(await db.query('test', columns: ['COUNT(*)']));
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text('$result records'),
                 duration: Duration(milliseconds: 700),

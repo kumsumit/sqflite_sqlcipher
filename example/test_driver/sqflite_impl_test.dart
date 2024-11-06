@@ -10,7 +10,6 @@ void main() {
   group('impl', () {
     if (Platform.isIOS || Platform.isAndroid) {
       group('debug_info', () {
-
         // test('verbose')
 
         test('simple', () async {

@@ -18,7 +18,7 @@ class SqfliteSqlCipherOpenDatabaseOptions
     this.readOnly = false,
     this.singleInstance = true,
   });
-  
+
   @override
   int? version;
   @override

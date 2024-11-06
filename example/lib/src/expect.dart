@@ -71,7 +71,8 @@ void expect(
 Future expectLater(actual, matcher, {String? reason, skip}) =>
     _expect(actual, matcher, reason: reason, skip: skip);
 
-String _formatFailure(Matcher expected, actual, String which, {String? reason}) {
+String _formatFailure(Matcher expected, actual, String which,
+    {String? reason}) {
   var buffer = StringBuffer();
   buffer.writeln(indent(prettyPrint(expected), first: 'Expected: '));
   buffer.writeln(indent(prettyPrint(actual), first: '  Actual: '));
@@ -111,7 +112,8 @@ Future<void> _expect(actual, matcher,
     reason ??= '$e at $trace';
   }
 
-  final errorStr = formatter(actual, matcher as Matcher, reason, matchState, verbose);
+  final errorStr =
+      formatter(actual, matcher as Matcher, reason, matchState, verbose);
   print('Error str: $errorStr');
   fail(errorStr);
 }

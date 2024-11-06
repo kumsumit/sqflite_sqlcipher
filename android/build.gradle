@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.1'
+        classpath 'com.android.tools.build:gradle:8.7.2'
     }
 }
 
@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdk 34
+    compileSdk 35
 
     namespace 'com.davidmartos96.sqflite_sqlcipher'
 
@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-    implementation 'net.zetetic:sqlcipher-android:4.5.7@aar'
+    implementation 'net.zetetic:sqlcipher-android:4.6.0@aar'
 
     // We need to use a version compatible with sqlcipher. See here:
     // https://github.com/sqlcipher/sqlcipher-android/blob/c5bd0cf2a2d26cd977d6127180f594750675093e/build.gradle#L34

@@ -25,13 +25,16 @@ class SqlCipherTestPage extends TestPage {
         onCreate: (db, version) async {
           var batch = db.batch();
 
-          batch.execute('CREATE TABLE Test (id INTEGER PRIMARY KEY, text NAME)');
+          batch
+              .execute('CREATE TABLE Test (id INTEGER PRIMARY KEY, text NAME)');
           await batch.commit();
         },
       );
 
       try {
-        expect(await db.rawInsert('INSERT INTO Test (text) VALUES (?)', ['test']), 1);
+        expect(
+            await db.rawInsert('INSERT INTO Test (text) VALUES (?)', ['test']),
+            1);
         var result = await db.query('Test');
         var expected = [
           {'id': 1, 'text': 'test'}
@@ -50,7 +53,8 @@ class SqlCipherTestPage extends TestPage {
 
       // Copy from asset
       var data = await rootBundle.load(join('assets', 'example_pass_1234.db'));
-      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      List<int> bytes =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       // Write and flush the bytes written
       await File(path).writeAsBytes(bytes, flush: true);
 
@@ -70,7 +74,8 @@ class SqlCipherTestPage extends TestPage {
 
       // Copy from asset
       var data = await rootBundle.load(join('assets', 'example_pass_1234.db'));
-      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      List<int> bytes =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       // Write and flush the bytes written
       await File(path).writeAsBytes(bytes, flush: true);
 
@@ -84,12 +89,15 @@ class SqlCipherTestPage extends TestPage {
       }
     });
 
-    test('Open asset database (SQLCipher 3.x, cipher_migrate on Android)', () async {
+    test('Open asset database (SQLCipher 3.x, cipher_migrate on Android)',
+        () async {
       var path = await initDeleteDb('asset_example.db');
 
       // Copy from asset
-      var data = await rootBundle.load(join('assets', 'sqlcipher-3.0-testkey.db'));
-      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      var data =
+          await rootBundle.load(join('assets', 'sqlcipher-3.0-testkey.db'));
+      List<int> bytes =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       // Write and flush the bytes written
       await File(path).writeAsBytes(bytes, flush: true);
 
@@ -112,13 +120,16 @@ class SqlCipherTestPage extends TestPage {
         onCreate: (db, version) async {
           var batch = db.batch();
 
-          batch.execute('CREATE TABLE Test (id INTEGER PRIMARY KEY, text NAME)');
+          batch
+              .execute('CREATE TABLE Test (id INTEGER PRIMARY KEY, text NAME)');
           await batch.commit();
         },
       );
 
       try {
-        expect(await db.rawInsert('INSERT INTO Test (text) VALUES (?)', ['test']), 1);
+        expect(
+            await db.rawInsert('INSERT INTO Test (text) VALUES (?)', ['test']),
+            1);
         var result = await db.query('Test');
         var expected = [
           {'id': 1, 'text': 'test'}

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 
-import android.database.SQLException;
 import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteException;
 import android.os.Handler;
@@ -26,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -64,6 +64,8 @@ import static com.davidmartos96.sqflite_sqlcipher.Constant.PARAM_SINGLE_INSTANCE
 import static com.davidmartos96.sqflite_sqlcipher.Constant.PARAM_SQL;
 import static com.davidmartos96.sqflite_sqlcipher.Constant.PARAM_SQL_ARGUMENTS;
 import static com.davidmartos96.sqflite_sqlcipher.Constant.TAG;
+
+import androidx.annotation.NonNull;
 
 import net.zetetic.database.sqlcipher.SQLiteDatabase;
 
@@ -105,26 +107,20 @@ public class SqfliteSqlCipherPlugin implements FlutterPlugin, MethodCallHandler 
     }
 
     @Override
-    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         context = null;
         methodChannel.setMethodCallHandler(null);
         methodChannel = null;
     }
 
     private static Object cursorValue(Cursor cursor, int index) {
-        switch (cursor.getType(index)) {
-            case Cursor.FIELD_TYPE_NULL:
-                return null;
-            case Cursor.FIELD_TYPE_INTEGER:
-                return cursor.getLong(index);
-            case Cursor.FIELD_TYPE_FLOAT:
-                return cursor.getDouble(index);
-            case Cursor.FIELD_TYPE_STRING:
-                return cursor.getString(index);
-            case Cursor.FIELD_TYPE_BLOB:
-                return cursor.getBlob(index);
-        }
-        return null;
+        return switch (cursor.getType(index)) {
+            case Cursor.FIELD_TYPE_INTEGER -> cursor.getLong(index);
+            case Cursor.FIELD_TYPE_FLOAT -> cursor.getDouble(index);
+            case Cursor.FIELD_TYPE_STRING -> cursor.getString(index);
+            case Cursor.FIELD_TYPE_BLOB -> cursor.getBlob(index);
+            default -> null;
+        };
     }
 
     private static List<Object> cursorRowToList(Cursor cursor, int length) {
@@ -433,15 +429,14 @@ public class SqfliteSqlCipherPlugin implements FlutterPlugin, MethodCallHandler 
                         Log.d(TAG, database.getThreadLogPrefix() + "no changes (id was " + cursor.getLong(1) + ")");
                     }
                     operation.success(null);
-                    return true;
                 } else {
                     final long id = cursor.getLong(1);
                     if (LogLevel.hasSqlLevel(database.logLevel)) {
                         Log.d(TAG, database.getThreadLogPrefix() + "inserted " + id);
                     }
                     operation.success(id);
-                    return true;
                 }
+                return true;
             } else {
                 Log.e(TAG, database.getThreadLogPrefix() + "fail to read changes for Insert");
             }
@@ -778,7 +773,7 @@ public class SqfliteSqlCipherPlugin implements FlutterPlugin, MethodCallHandler 
 
                                 if (!inMemory) {
                                     File file = new File(path);
-                                    File directory = new File(file.getParent());
+                                    File directory = new File(Objects.requireNonNull(file.getParent()));
                                     if (!directory.exists()) {
                                         if (!directory.mkdirs()) {
                                             if (!directory.exists()) {
@@ -847,15 +842,12 @@ public class SqfliteSqlCipherPlugin implements FlutterPlugin, MethodCallHandler 
         }
 
         final BgResult bgResult = new BgResult(result);
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (openCloseLocker) {
-                    closeDatabase(database);
-                }
-
-                bgResult.success(null);
+        handler.post(() -> {
+            synchronized (openCloseLocker) {
+                closeDatabase(database);
             }
+
+            bgResult.success(null);
         });
 
     }
@@ -1047,31 +1039,16 @@ public class SqfliteSqlCipherPlugin implements FlutterPlugin, MethodCallHandler 
         // make sure to respond in the caller thread
         public void success(final Object results) {
 
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    result.success(results);
-                }
-            });
+            handler.post(() -> result.success(results));
         }
 
-        public void error(final String errorCode, final String errorMessage, final Object data) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    result.error(errorCode, errorMessage, data);
-                }
-            });
+        public void error(@NonNull final String errorCode, final String errorMessage, final Object data) {
+            handler.post(() -> result.error(errorCode, errorMessage, data));
         }
 
         @Override
         public void notImplemented() {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    result.notImplemented();
-                }
-            });
+            handler.post(result::notImplemented);
         }
     }
 }
