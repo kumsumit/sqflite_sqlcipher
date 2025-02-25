@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
-import 'package:pedantic/pedantic.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:sqflite_sqlcipher/src/sqflite_import.dart'
     show SqfliteDatabaseMixin, SqfliteDatabaseFactoryMixin;
