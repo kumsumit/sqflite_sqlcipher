@@ -1,8 +1,6 @@
 package com.davidmartos96.sqflite_sqlcipher;
 
 import android.util.Log;
-
-
 import java.io.File;
 
 import static com.davidmartos96.sqflite_sqlcipher.Constant.TAG;
@@ -32,23 +30,26 @@ class Database {
     }
 
     public void open() {
-        openWithFlags(SQLiteDatabase.CREATE_IF_NECESSARY);
+        openWithFlags();
 
     }
 
     // Change default error handler to avoid erasing the existing file.
     public void openReadOnly() {
-        openWithFlags(SQLiteDatabase.OPEN_READONLY, dbObj -> {
-            // ignored
-            // default implementation delete the file
-            //
-            // This happens asynchronously so cannot be tracked. However a simple
-            // access should fail
-        });
+        openWithFlags(
+                SQLiteDatabase.OPEN_READONLY,
+                (db, error) -> {
+                    // intentionally ignored
+                    // default SQLCipher behavior deletes the database
+                    // we override to prevent deletion
+                    Log.w(TAG, "Database corruption reported, ignoring. Error: " + error);
+                }
+        );
     }
 
-    private void openWithFlags(int flags) {
-        openWithFlags(flags, null);
+
+    private void openWithFlags() {
+        openWithFlags(SQLiteDatabase.CREATE_IF_NECESSARY, null);
     }
 
     private void openWithFlags(int flags, DatabaseErrorHandler errorHandler) {
@@ -79,8 +80,11 @@ class Database {
     }
 
     public void close() {
-        sqliteDatabase.close();
+        if (sqliteDatabase != null && sqliteDatabase.isOpen()) {
+            sqliteDatabase.close();
+        }
     }
+
 
     public SQLiteDatabase getWritableDatabase() {
         return sqliteDatabase;
