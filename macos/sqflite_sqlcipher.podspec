@@ -15,8 +15,8 @@ Access SQLite database.
   s.source_files     = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'FlutterMacOS'
-  s.dependency 'FMDB/SQLCipher', '~> 2.7.5'
-  s.dependency 'SQLCipher', '4.5.7'
+  s.dependency 'FMDB/SQLCipher', '~> 2.8.0'
+  s.dependency 'SQLCipher', '4.13.0'
 
   s.platform = :osx, '10.13'
   s.pod_target_xcconfig = { 
